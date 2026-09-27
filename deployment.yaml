@@ -4,6 +4,11 @@ metadata:
   name: my-app
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app: my-app
@@ -14,6 +19,26 @@ spec:
     spec:
       containers:
       - name: my-app
-        image: recardo108/my-app
+        # Replaced on each deploy by GitHub Actions (kubectl set image)
+        image: 000000000000.dkr.ecr.us-east-1.amazonaws.com/my-app:latest
         ports:
         - containerPort: 3000
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 20
