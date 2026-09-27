@@ -29,7 +29,7 @@ jobs:
 
   build-and-push:
     needs: test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.AWS_REGION != ''
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.image.outputs.image }}

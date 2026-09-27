@@ -22,6 +22,30 @@ flowchart LR
 
 Pull requests run **test** and a **Docker build** (no push or deploy). Pushes to `main` run the full pipeline.
 
+## Finish AWS + GitHub setup (one time)
+
+1. Sign in to AWS on this machine:
+
+```powershell
+aws configure
+# or: aws login
+```
+
+2. Run the bootstrap script (creates ECR, GitHub OIDC role, EKS access; requires an **existing** EKS cluster):
+
+```powershell
+cd scripts
+.\bootstrap-aws.ps1 -Region us-east-1 -EksClusterName YOUR_CLUSTER_NAME
+```
+
+3. Apply manifests on the cluster (first deploy):
+
+```powershell
+.\bootstrap-k8s.ps1 -Image YOUR_ECR_URI:latest
+```
+
+After GitHub variables and `AWS_ROLE_ARN` are set, every push to `main` runs the full pipeline.
+
 ## Prerequisites
 
 - AWS account with:
